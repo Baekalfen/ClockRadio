@@ -17,7 +17,7 @@ def wait_until(execute_it_now):
         else:
             time.sleep(1)
 
-ser = serial.serial_for_url('/dev/ttyUSB0', baudrate=115200, timeout=3)
+ser = serial.serial_for_url('/dev/ttyUSB0', baudrate=115280, timeout=3)
     
 def sendCommand(cmd):
     ser.write(cmd)
@@ -28,11 +28,14 @@ targetTime = 8 # 8 in the morning
 
 while (True):
     t = datetime.datetime.today()
+    print "Checking time"
     if t.hour > targetTime: 
         t += datetime.timedelta(days=1)
-        t.hour = 8
+        t += datetime.timedelta(hours=-t.hour+targetTime)
+        print "Waiting until %s" % str(t)
         wait_until(t)
     else:
+        print "Waiting until %s" % str(t)
         wait_until(datetime.datetime(t.year,t.month,t.day,targetTime,0))
 
     print "Checking if stereo is already on"
