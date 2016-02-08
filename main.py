@@ -9,7 +9,9 @@ def wait_until(execute_it_now):
         if diff < 30:
             return
         else:
-            print "Waiting for %s seconds" % (diff/2)
+            sec = datetime.timedelta(seconds=int(diff/2))
+            d = datetime.datetime(1,1,1) + sec
+            print "Waiting for %d:%d:%d:%d" % (d.day-1, d.hour, d.minute, d.second)
             time.sleep(diff/2)
 
 ser = serial.serial_for_url('/dev/ttyUSB0', baudrate=115280, timeout=1)
