@@ -12,13 +12,6 @@ def wait_until(execute_it_now):
             print "Waiting for %s seconds" % (diff/2)
             time.sleep(diff/2)
 
-        # elif diff <= 1:
-        #     time.sleep(0.5)
-        # elif diff <= 4:
-        #     time.sleep(1)
-        # elif diff <= 30:
-        #     time.sleep(5)
-
 ser = serial.serial_for_url('/dev/ttyUSB0', baudrate=115280, timeout=1)
     
 def sendCommand(cmd):
@@ -33,7 +26,6 @@ while (True):
     print "Checking time"
     if t.hour > targetTime and t.minute > 1: 
         t = datetime.datetime(t.year, t.month, t.day+1, targetTime)
-        # t = datetime.datetime(2016,2,8,22)
         print "Waiting until %s" % str(t)
         wait_until(t)
     else:
