@@ -33,9 +33,7 @@ while (True):
     print "Checking time"
     if t.hour > targetTime and t.minute > 1: 
         t = datetime.datetime(t.year, t.month, t.day+1, targetTime)
-        t = datetime.datetime(2016,2,8,22)
-        # t += datetime.timedelta(days=1)
-        # t += datetime.timedelta(hours=-t.hour+targetTime)
+        # t = datetime.datetime(2016,2,8,22)
         print "Waiting until %s" % str(t)
         wait_until(t)
     else:
