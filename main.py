@@ -17,20 +17,12 @@ def wait_until(execute_it_now):
         else:
             time.sleep(1)
 
-ser = serial.serial_for_url('/dev/ttyUSB0', baudrate=115200, timeout=1)
+ser = serial.serial_for_url('/dev/ttyUSB0', baudrate=115200, timeout=3)
+    
+def sendCommand(cmd):
+    ser.write(cmd)
+    return ser.read(128)
 
-def stereoInUse():
-    ser.flushInput()
-    ser.write("get_display!")
-    text = ser.read(8)
-    if text == "display=":
-        print "Got display data. Reading input source"
-        length = ser.read(3)
-        ser.read()
-
-def sendCommands(cmds):
-    for cmd in cmds:
-        ser.write(cmd)
 
 targetTime = 8 # 8 in the morning
 
@@ -43,19 +35,28 @@ while (True):
     else:
         wait_until(datetime.datetime(t.year,t.month,t.day,targetTime,0))
 
+    print "Checking if stereo is already on"
+    if not sendCommand("get_display!") == '':
+        print "Already on, waiting for tommorow"
+        continue
+
     print "Turning stereo on"
+    sendCommand("power_on!")
+
     print "Switching to AUX2"
+    sendCommand("aux2!")
 
     print "Starting radio"
     subprocess.call("mpc play", shell=True)
+    subprocess.call("mpc volume 100", shell=True)
 
     print "Turning off if not in use"
     while (True):
         time.sleep(60*5)
         print "Checking if radio is in use"
-        inUse = True
-        if inUse:
+        if not sendCommand("get_display!") == '':
             print "Leaving radio on"
         else:
             print "Turning radio off"
             subprocess.call("mpc stop", shell=True)
+            break
