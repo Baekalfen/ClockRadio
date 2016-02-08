@@ -39,8 +39,9 @@ while (True):
         print "Waiting until %s" % str(t)
         wait_until(t)
     else:
+        t = datetime.datetime(t.year,t.month,t.day,targetTime)
         print "Waiting until %s" % str(t)
-        wait_until(datetime.datetime(t.year,t.month,t.day,targetTime))
+        wait_until(t)
 
     print "Checking if stereo is already on"
     if not sendCommand("get_display!") == '' and\
