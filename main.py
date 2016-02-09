@@ -25,8 +25,8 @@ targetTime = 8 # 8 in the morning
 
 while (True):
     t = datetime.datetime.today()
-    print "Checking time"
-    if t.hour > targetTime and t.minute > 1: 
+    print "Checking time %s" % str(t)
+    if t.hour > targetTime or (t.hour == targetTime and t.minute >= 1):
         t = datetime.datetime(t.year, t.month, t.day+1, targetTime)
         print "Waiting until %s" % str(t)
         wait_until(t)
@@ -36,9 +36,9 @@ while (True):
         wait_until(t)
 
     print "Checking if stereo is already on"
-    if not sendCommand("get_display!") == '' and\
-       not sendCommand("get_display!") == '': # Checking twice because it is a bit unstable
-        print "Already on, waiting for tommorow"
+    if not sendCommand("get_display!") == '':
+        print "Already on, start over in 10 seconds"
+        time.sleep(10)
         continue
 
     print "Turning stereo on"
@@ -55,9 +55,9 @@ while (True):
     subprocess.call("mpc volume 100", shell=True)
 
     delay = 60*5
-    print "Turning up in %s seconds" % delay
-    time.sleep(delay)
-    sendCommand("volume_50!")
+    # print "Turning up in %s seconds" % delay
+    # time.sleep(delay)
+    # sendCommand("volume_50!")
 
     print "Turning off if not in use"
     while (True):
