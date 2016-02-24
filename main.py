@@ -2,6 +2,7 @@ import time
 import datetime
 import subprocess
 import serial
+import sys
 
 def wait_until(execute_it_now):
     while True:
@@ -21,25 +22,32 @@ def sendCommand(cmd):
     return ser.read(512) # It's overkill, but we really want everything
 
 
-targetTime = 8 # 8 in the morning
+if len(sys.argv)>2:
+    targetTime = int(sys.argv[1])
+    targetMinute = int(sys.argv[2])
+else:
+    targetTime = 8 # 8 in the morning
+
+
+print "Alarm set to", targetTime
 
 while (True):
     t = datetime.datetime.today()
     print "Checking time %s" % str(t)
-    if t.hour > targetTime or (t.hour == targetTime and t.minute >= 1):
-        t = datetime.datetime(t.year, t.month, t.day+1, targetTime)
+    if t.hour > targetTime or (t.hour == targetTime and t.minute >= 1+targetMinute):
+        t = datetime.datetime(t.year, t.month, t.day+1, targetTime, targetMinute)
         print "Waiting until %s" % str(t)
         wait_until(t)
     else:
-        t = datetime.datetime(t.year,t.month,t.day,targetTime)
+        t = datetime.datetime(t.year,t.month,t.day,targetTime, targetMinute)
         print "Waiting until %s" % str(t)
         wait_until(t)
 
-    print "Checking if stereo is already on"
-    if not sendCommand("get_display!") == '':
-        print "Already on, start over in 10 seconds"
-        time.sleep(10)
-        continue
+#    print "Checking if stereo is already on"
+#    if not sendCommand("get_display!") == '':
+#        print "Already on, start over in 10 seconds"
+#        time.sleep(10)
+#        continue
 
     print "Turning stereo on"
     sendCommand("power_on!")
